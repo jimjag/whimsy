@@ -10,6 +10,8 @@ require 'json'
 require 'set'
 
 BOARD = ASF::SVN['private/foundation/board']
+REPO = 'https://svn.apache.org/repos/private/foundation/board/'
+
 # Hash keys returned by summarize
 ERRORS = 'errors'
 PEOPLE = 'people'
@@ -62,7 +64,13 @@ _html do
               directors, others = agenda[PEOPLE].select{ |id, data| data['attending'] }.partition{ |id, data| 'director'.eql?(data['role']) }
               _tr_ do
                 _td do
-                  _ month.sub('board_agenda_', '')
+                  file = month + '.txt'
+                  if not File.exist? "#{BOARD}/#{file}"
+                    file = "archived_agendas/#{file}"
+                  end
+
+                  _a month.sub('board_agenda_', '').gsub('_', '-'),
+                    href: "#{REPO}/#{file}"
                 end
                 _td.text_center do
                   dct = directors.length
@@ -107,7 +115,9 @@ _html do
     _ul do
       datums.select{ |k,v| v.is_a?(Hash) && v.has_key?(ERRORS) }.each do |month, agenda|
         _li do
-          _span.text_warning month
+          _a href: "#{REPO}/archived_agendas/#{month}.txt" do
+            _span.text_warning month
+          end
         end
       end
     end
