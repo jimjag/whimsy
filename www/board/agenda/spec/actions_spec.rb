@@ -15,7 +15,7 @@ feature 'server actions' do
   end
 
   #
-  # Index
+  # Index - split in two so that cleanup occurs after each step
   #
   describe 'index' do
     it "should post new special orders" do
@@ -30,19 +30,6 @@ feature 'server actions' do
       expect(resolution['title']).to eq('Establish Test')
       expect(resolution['text']).
         to eq('WHEREAS, RESOLVED, and other official words')
-    end
-
-    it "should post out of cycle reports" do
-      @agenda = 'board_agenda_2015_02_18.txt'
-      @attach = '+Whimsy'
-      @message = 'Post Out of Cycle Whimsy Project'
-      @report = 'all is well'
-
-      eval(File.read('views/actions/post.json.rb'))
-
-      resolution = @agenda.find {|item| item[:attach] == 'CG'}
-      expect(resolution['title']).to eq('Whimsy')
-      expect(resolution['report']).to eq('all is well')
     end
   end
 
